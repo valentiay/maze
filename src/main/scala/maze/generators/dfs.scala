@@ -1,52 +1,41 @@
 package maze.generators
 
+import cats.Monad
 import maze._
 import cats.syntax.option._
-import cats.syntax.applicative._
 import cats.syntax.flatMap._
 import cats.syntax.functor._
-import cats.syntax.traverse._
-import cats.instances.list._
 import maze.directed.DirectedWallsFactory
 import utils._
 
 import scala.util.Random
 
-object DfsMazeGenerator {
+object dfs {
   def mkInstance[F[_] : MonadThrow](factory: DirectedWallsFactory): MazeGenerator[F] = (w, h) => {
-//    Random.setSeed(42)
     val dfsW = w / 2
     val dfsH = h / 2
-
-    val visitedFrom = Array.ofDim[Option[(Int, Int)]](dfsW, dfsH)
+    val visitedFrom = Array.fill[Option[(Int, Int)]](dfsW, dfsH)(None)
+    visitedFrom(0)(0) = (0, 0).some
 
     def isInBounds(x: Int, y: Int): Boolean =
       0 <= x && 0 <= y && x < dfsW && y < dfsH
 
-    for (x <- 0 until dfsW; y <- 0 until dfsH) visitedFrom(x)(y) = None
-
-    visitedFrom(0)(0) = (0, 0).some
-    var currentX = 0
-    var currentY = 0
-
-    var continue = true
-    while (continue) {
-      val candidates =
-        Seq((currentX - 1, currentY), (currentX, currentY - 1), (currentX + 1, currentY), (currentX, currentY + 1))
-          .filter { case (x, y) => isInBounds(x, y) && visitedFrom(x)(y).isEmpty }
-      if (candidates.nonEmpty) {
-        val (nextX, nextY) = candidates(Random.nextInt(candidates.size))
-        visitedFrom(nextX)(nextY) = (currentX, currentY).some
-        currentX = nextX
-        currentY = nextY
-      } else if (currentX == 0 && currentY == 0) {
-        continue = false
-      } else {
-        val (fromX, fromY) = visitedFrom(currentX)(currentY).get
-        currentX = fromX
-        currentY = fromY
+    def mkDfsMatrix: F[Unit] = {
+      type TailrecRes = Either[(Int, Int), Unit]
+      Monad[F].tailRecM((0, 0)) { case (currentX, currentY) =>
+        val candidates =
+          Seq((currentX - 1, currentY), (currentX, currentY - 1), (currentX + 1, currentY), (currentX, currentY + 1))
+            .filter { case (x, y) => isInBounds(x, y) && visitedFrom(x)(y).isEmpty }
+        if (candidates.nonEmpty) {
+          val (nextX, nextY) = candidates(Random.nextInt(candidates.size))
+          visitedFrom(nextX)(nextY) = (currentX, currentY).some
+          Monad[F].pure[TailrecRes](Left((nextX, nextY)))
+        } else if (currentX == 0 && currentY == 0) {
+          Monad[F].pure[TailrecRes](Right(()))
+        } else {
+          visitedFrom(currentX)(currentY).liftTo[F](new IllegalStateException("???")).map[TailrecRes](Left.apply)
+        }
       }
-
     }
 
     def isWall(x: Int, y: Int): Boolean = {
@@ -71,11 +60,18 @@ object DfsMazeGenerator {
       if (self) mkCell(factory)(top, right, bottom, left) else factory.space
     }
 
-    val matrix = Array.ofDim[MazeCell](w, h)
+    def mkMaze: F[Maze] = {
+      val matrix = Array.ofDim[MazeCell](w, h)
+      for {
+        x <- 0 until w
+        y <- 0 until h
+      } yield matrix(x)(y) = getCell(x, y)
+      MatrixMaze.mkInstance(matrix)
+    }
+
     for {
-      x <- 0 until w
-      y <- 0 until h
-    } yield matrix(x)(y) = getCell(x, y)
-    MatrixMaze.mkInstance(matrix)
+      _ <- mkDfsMatrix
+      maze <- mkMaze
+    } yield maze
   }
 }
