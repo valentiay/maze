@@ -1,13 +1,13 @@
 import cats.effect.SyncIO
 import cats.syntax.traverse._
 import cats.instances.list._
-import maze.directed.UnicodeWallsFactory
+import maze.directed.{SimpleWallsFactory, UnicodeWallsFactory}
 import maze.generators.DfsMazeGenerator
 
 object Main {
   def main(args: Array[String]): Unit = {
     val mazeGenerator = DfsMazeGenerator.mkInstance[SyncIO](UnicodeWallsFactory)
-    mazeGenerator(41, 13).flatMap { maze =>
+    mazeGenerator(81, 17).flatMap { maze =>
       val (w, h) = maze.size
       (for {
         y <- 0 until h

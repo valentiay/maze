@@ -1,19 +1,21 @@
 package maze.directed
 
+import maze.WallRepr
+
 object unicodeWalls {
-  case object Top extends Top("\u255b\u2558")
-  case object Right extends Right(" \u2550")
-  case object Bottom extends Bottom("\u2555\u2552")
-  case object Left extends Left("\u2550 ")
-  case object TopRight extends TopRight("\u2575\u2558")
-  case object TopBottom extends TopBottom("\u2502\u2502")
-  case object TopLeft extends TopLeft("\u255b\u2575")
-  case object RightBottom extends RightBottom("\u2577\u2552")
-  case object RightLeft extends RightLeft("\u2550\u2550")
-  case object BottomLeft extends BottomLeft("\u2555\u2577")
-  case object TopRightBottom extends TopRightBottom("\u2502\u255e")
-  case object TopRightLeft extends TopRightLeft("\u255b\u2558")
-  case object TopBottomLeft extends TopBottomLeft("\u2561\u2502")
-  case object RightBottomLeft extends RightBottomLeft("\u2555\u2552")
-  case object All extends All("\u2561\u255e")
+  case object Top extends WallRepr("\u2551 ") with Top
+  case object Right extends WallRepr(" \u2550") with Right
+  case object Bottom extends WallRepr("\u2551 ") with Bottom
+  case object Left extends WallRepr("\u2550 ") with Left
+  case object TopRight extends WallRepr("\u255a\u2550") with TopRight
+  case object TopBottom extends WallRepr("\u2551 ") with TopBottom
+  case object TopLeft extends WallRepr("\u255d ") with TopLeft
+  case object RightBottom extends WallRepr("\u2554\u2550") with RightBottom
+  case object RightLeft extends WallRepr("\u2550\u2550") with RightLeft
+  case object BottomLeft extends WallRepr("\u2557 ") with BottomLeft
+  case object TopRightBottom extends WallRepr("\u2560\u2550") with TopRightBottom
+  case object TopRightLeft extends WallRepr("\u2569\u2550") with TopRightLeft
+  case object TopBottomLeft extends WallRepr("\u2563 ") with TopBottomLeft
+  case object RightBottomLeft extends WallRepr("\u2566\u2550") with RightBottomLeft
+  case object All extends WallRepr("\u256c\u2550") with All
 }

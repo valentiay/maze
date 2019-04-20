@@ -5,6 +5,8 @@ import cats.syntax.option._
 import cats.syntax.applicative._
 import cats.syntax.flatMap._
 import cats.syntax.functor._
+import cats.syntax.traverse._
+import cats.instances.list._
 import maze.directed.DirectedWallsFactory
 import utils._
 
@@ -12,7 +14,7 @@ import scala.util.Random
 
 object DfsMazeGenerator {
   def mkInstance[F[_] : MonadThrow](factory: DirectedWallsFactory): MazeGenerator[F] = (w, h) => {
-    Random.setSeed(42)
+//    Random.setSeed(42)
     val dfsW = w / 2
     val dfsH = h / 2
 
@@ -47,50 +49,33 @@ object DfsMazeGenerator {
 
     }
 
-    def hasWall(x1: Int, y1: Int, x2: Int, y2: Int): F[Boolean] = {
-      if (isInBounds(x1, y1) && isInBounds(x2, y2)) {
-        for {
-          _ <- new IllegalArgumentException("Points are either too far or the same")
-            .raise[F]
-            .whenA(Math.abs(x1 - x2) + Math.abs(y1 - y2) != 1)
-          visitedFrom1 <- visitedFrom(x1)(y1).liftTo[F](new IllegalStateException("visitedFromMatrix is not ready"))
-          visitedFrom2 <- visitedFrom(x2)(y2).liftTo[F](new IllegalStateException("visitedFromMatrix is not ready"))
-        } yield visitedFrom2 == (x1, y1) || visitedFrom1 == (x2, y2)
-      } else {
-        false.pure[F]
-      }
+    def isWall(x: Int, y: Int): Boolean = {
+      val dfsX = x / 2
+      val dfsY = y / 2
+
+      if (!isInBounds(dfsX, dfsY)) false
+      else if (x % 2 == 0 && y % 2 == 0) false
+      else if (x % 2 == 0 && y % 2 == 1) !isInBounds(dfsX, dfsY + 1) ||
+        (visitedFrom(dfsX)(dfsY) != (dfsX, dfsY + 1).some && visitedFrom(dfsX)(dfsY + 1) != (dfsX, dfsY).some)
+      else if (x % 2 == 1 && y % 2 == 0) !isInBounds(dfsX + 1, dfsY) ||
+        (visitedFrom(dfsX)(dfsY) != (dfsX + 1, dfsY).some && visitedFrom(dfsX + 1)(dfsY) != (dfsX, dfsY).some)
+      else true
     }
 
-    def getCell(x: Int, y: Int): F[MazeCell] =
-      for {
-        top    <- hasWall((x - 1) / 2, (y - 1) / 2, (x - 1) / 2, (y - 1) / 2 - 1)
-        right  <- hasWall((x - 1) / 2, (y - 1) / 2, (x - 1) / 2 + 1, (y - 1) / 2)
-        bottom <- hasWall((x - 1) / 2, (y - 1) / 2, (x - 1) / 2, (y - 1) / 2 + 1)
-        left   <- hasWall((x - 1) / 2, (y - 1) / 2, (x - 1) / 2 - 1, (y - 1) / 2)
-      } yield mkCell(factory)(top, right, bottom, left)
+    def getCell(x: Int, y: Int): MazeCell = {
+      val top = isWall(x - 1, y - 2)
+      val right = isWall(x, y - 1)
+      val bottom = isWall(x - 1, y)
+      val left = isWall(x - 2, y - 1)
+      val self = isWall(x - 1, y - 1)
+      if (self) mkCell(factory)(top, right, bottom, left) else factory.space
+    }
 
     val matrix = Array.ofDim[MazeCell](w, h)
-    for (x <- 0 until w) matrix(x)(0) = SolidWall
-    for (y <- 0 until h) matrix(0)(y) = SolidWall
     for {
-      x <- 0 until dfsW
-      y <- 0 until dfsH
-    } {
-      matrix(2 * x + 1)(2 * y + 1) = SimpleSpace
-      matrix(2 * x + 2)(2 * y + 1) = if (x + 1 < dfsW && visitedFrom(x + 1)(y).get == (x, y) || visitedFrom(x)(y).get == (x + 1, y)) {
-        SimpleSpace
-      } else {
-        SolidWall
-      }
-      matrix(2 * x + 1)(2 * y + 2) = if (y + 1 < dfsH && visitedFrom(x)(y + 1).get == (x, y) || visitedFrom(x)(y).get == (x, y + 1)) {
-        SimpleSpace
-      } else {
-        SolidWall
-      }
-      matrix(2 * x + 2)(2 * y + 2) = SolidWall
-    }
-
+      x <- 0 until w
+      y <- 0 until h
+    } yield matrix(x)(y) = getCell(x, y)
     MatrixMaze.mkInstance(matrix)
   }
-
 }

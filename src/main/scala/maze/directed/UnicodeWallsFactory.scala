@@ -1,4 +1,5 @@
 package maze.directed
+
 import maze.directed.unicodeWalls._
 import maze.{SimpleSpace, Space}
 

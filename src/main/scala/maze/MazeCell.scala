@@ -5,17 +5,16 @@ trait MazeCell {
   def isWall: Boolean
 }
 
-abstract class Wall(val repr: String) extends MazeCell {
+trait Wall extends MazeCell {
   val isWall = true
 }
 
-case object SolidWall extends Wall("||")
+abstract class WallRepr(val repr: String) extends Wall
 
-
-abstract class Space(val repr: String) extends MazeCell {
+trait Space extends MazeCell {
   val isWall = false
 }
 
-case object SimpleSpace extends Space("  ")
+abstract class SpaceRepr(val repr: String) extends Space
 
-case class CustomCell(repr: String, isWall: Boolean) extends MazeCell
+case object SimpleSpace extends SpaceRepr("  ")
