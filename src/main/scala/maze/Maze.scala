@@ -7,18 +7,21 @@ import utils._
 
 trait Maze {
   def size: (Int, Int)
-
+  def isInBounds(x: Int, y: Int): Boolean
   def get[F[_] : MonadThrow](x: Int, y: Int): F[MazeCell]
 }
 
 class MatrixMaze private(matrix: Array[Array[MazeCell]]) extends Maze {
   val size: (Int, Int) = (matrix.length, matrix.head.length)
 
+  def isInBounds(x: Int, y: Int): Boolean =
+    (0 <= x) && (0 <= y) && (x < size._1) && (y < size._2)
+
   def get[F[_] : MonadThrow](x: Int, y: Int): F[MazeCell] =
     for {
       _ <- new IllegalArgumentException("Coordinates out of bounds")
         .raise
-        .whenA((0 > x) || (0 > y) || (x >= size._1) || (y >= size._2))
+        .whenA(!isInBounds(x, y))
     } yield matrix(x)(y)
 }
 

@@ -21,19 +21,25 @@ object dfs {
       0 <= x && 0 <= y && x < dfsW && y < dfsH
 
     def mkDfsMatrix: F[Unit] = {
-      type TailrecRes = Either[(Int, Int), Unit]
-      Monad[F].tailRecM((0, 0)) { case (currentX, currentY) =>
+      Monad[F].tailRecM[(Int, Int), Unit]((0, 0)) { case (currentX, currentY) =>
         val candidates =
-          Seq((currentX - 1, currentY), (currentX, currentY - 1), (currentX + 1, currentY), (currentX, currentY + 1))
-            .filter { case (x, y) => isInBounds(x, y) && visitedFrom(x)(y).isEmpty }
+          Seq(
+            (currentX - 1, currentY),
+            (currentX, currentY - 1),
+            (currentX + 1, currentY),
+            (currentX, currentY + 1)
+          ).filter { case (x, y) => isInBounds(x, y) && visitedFrom(x)(y).isEmpty }
+
         if (candidates.nonEmpty) {
           val (nextX, nextY) = candidates(Random.nextInt(candidates.size))
           visitedFrom(nextX)(nextY) = (currentX, currentY).some
-          Monad[F].pure[TailrecRes](Left((nextX, nextY)))
+          Monad[F].pure(Left((nextX, nextY)))
         } else if (currentX == 0 && currentY == 0) {
-          Monad[F].pure[TailrecRes](Right(()))
+          Monad[F].pure(Right(()))
         } else {
-          visitedFrom(currentX)(currentY).liftTo[F](new IllegalStateException("???")).map[TailrecRes](Left.apply)
+          visitedFrom(currentX)(currentY)
+            .liftTo[F](new IllegalStateException("visitedFrom corrupted"))
+            .map(Left.apply)
         }
       }
     }
