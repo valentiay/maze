@@ -60,4 +60,4 @@
 Из корневой директории проекта `java -jar maze`.
 
 ## Схема классов
-Доступна по ссылке https://drive.google.com/file/d/1MSQuHxAzoSm0GilY_Myq8OuwBszIR0Nj/view?usp=sharing
+Доступна по ссылке https://drive.google.com/file/d/1idQI0lfpe_ykAT_yNoXbSKc4-uvhI9Eh/view?usp=sharing
