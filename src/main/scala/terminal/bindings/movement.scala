@@ -5,7 +5,7 @@ import terminal.Controller.ControllerState
 import utils.MonadThrow
 
 object movement {
-  final class UpBinding[F[_] : MonadThrow](bindings: Set[String])
+  final class TopBinding[F[_] : MonadThrow](bindings: Set[String])
     extends MovementBinding(bindings, ControllerState.hero composeLens Hero.y, _ - 1)
 
   final class RightBinding[F[_] : MonadThrow](bindings: Set[String])
@@ -17,7 +17,7 @@ object movement {
   final class LeftBinding[F[_] : MonadThrow](bindings: Set[String])
     extends MovementBinding(bindings, ControllerState.hero composeLens Hero.x, _ - 1)
 
-  final class FastUpBinding[F[_] : MonadThrow](bindings: Set[String])
+  final class FastTopBinding[F[_] : MonadThrow](bindings: Set[String])
     extends FastMovementBinding(bindings, ControllerState.hero composeLens Hero.y, _ - 1)
 
   final class FastRightBinding[F[_] : MonadThrow](bindings: Set[String])

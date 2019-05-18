@@ -1,4 +1,4 @@
-package terminal
+package terminal.printers
 
 trait Printer[F[_]] {
   def height: Int
