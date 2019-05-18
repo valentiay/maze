@@ -54,11 +54,11 @@ object SettingsController {
     for {
       _ <- Sync[F].delay(print(
         """
-          |Enter terminal width in characters (120 is recommended, 50 is minimal)
+          |Enter terminal width in characters (120 is recommended, 40 is minimal)
           |> """
       .stripMargin))
       raw <- Sync[F].delay(StdIn.readInt())
-      width <- if (raw >= 50) {
+      width <- if (raw >= 40) {
         raw.pure
       } else {
         ApplicativeError[F, Throwable].raiseError(new InputMismatchException("Width too small"))
@@ -69,7 +69,7 @@ object SettingsController {
     for {
       _ <- Sync[F].delay(print(
         """
-          |Enter radius player is able to see (3 for hard, 5 for medium, > 7 for easy)
+          |Enter the radius of circle player is able to see (3 for hard, 5 for medium, > 7 for easy)
           |> """.stripMargin))
       raw <- Sync[F].delay(StdIn.readInt())
       radius <- if (raw >= 3) {
