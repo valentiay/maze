@@ -2,7 +2,7 @@ package maze.directed
 
 import maze.{SimpleSpace, Space, WallRepr}
 
-object SimpleWallsFactory extends DirectedWallsFactory {
+object AsciiWallsFactory extends DirectedWallsFactory {
   def space: Space = SimpleSpace
   def top: Top = UniversalWall
   def right: Right = UniversalWall
