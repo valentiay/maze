@@ -1,7 +1,5 @@
 package game.printers
 
-import scala.util.Random
-
 trait ShadowGenerator {
   def nextSymbol: String
 }

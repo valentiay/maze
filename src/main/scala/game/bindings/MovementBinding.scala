@@ -7,9 +7,9 @@ import monocle.Lens
 import utils.MonadThrow
 
 abstract class MovementBinding[F[_] : MonadThrow](
-                                                   bindings: Set[String],
-                                                   lens: Lens[GameControllerState, Int],
-                                                   f: Int => Int,
+  bindings: Set[String],
+  lens: Lens[GameControllerState, Int],
+  f: Int => Int,
 ) extends ConfiguredBinding[F](bindings) {
 
   def action(state: GameControllerState): F[GameControllerState] = {
