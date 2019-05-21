@@ -5,6 +5,7 @@ import cats.effect.Sync
 import cats.syntax.flatMap._
 import cats.syntax.functor._
 import cats.syntax.traverse._
+import cats.syntax.applicative._
 import cats.instances.list._
 import config.Config
 import hero.Hero
@@ -30,9 +31,19 @@ object GameController {
     }).toList.sequence.void
   }
 
+  def clear[F[_]: Sync]: F[Unit] = {
+    if (System.getProperty("os.name") == "Linux") {
+      Sync[F].delay("clear".!)
+    } else if (System.getProperty("os.name") == "Windows") {
+      Sync[F].delay("cls".!)
+    } else {
+      ().pure[F]
+    }
+  }
+
   def run[F[_] : MonadThrow : Sync](config: Config[F])(state: GameControllerState): F[GameControllerState] = {
     for {
-      _ <- Sync[F].delay("clear".!)
+      _ <- clear
       _ <- render(config, state)
       _ <- Sync[F].delay(print("> "))
 
