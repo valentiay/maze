@@ -57,7 +57,7 @@
     > s
 
 ## Запуск
-Из корневой директории проекта `java -jar maze`.
+Из корневой директории проекта `java -jar maze.jar`.
 
 ## Схема классов
 Доступна по ссылке https://drive.google.com/file/d/1idQI0lfpe_ykAT_yNoXbSKc4-uvhI9Eh/view?usp=sharing
