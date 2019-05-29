@@ -8,11 +8,10 @@ import cats.syntax.traverse._
 import cats.syntax.applicative._
 import cats.instances.list._
 import config.Config
-import hero.Hero
 import maze.Maze
 import monocle.macros.Lenses
-import game.bindings.Binding
-import game.printers.{InfoPrinter, MazePrinter}
+import config.bindings.Binding
+import printers.{InfoPrinter, MazePrinter}
 import utils.MonadThrow
 
 import scala.io.StdIn

@@ -1,4 +1,4 @@
-package game.bindings
+package config.bindings
 
 import game.GameController.GameControllerState
 

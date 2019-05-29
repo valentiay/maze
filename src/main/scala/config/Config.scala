@@ -1,8 +1,8 @@
 package config
 
 import maze.generators.MazeGenerator
-import game.bindings.Binding
-import game.printers.ShadowGenerator
+import config.bindings.Binding
+import printers.ShadowGenerator
 
 case class Config[F[_]](
   bindings: List[Binding[F]],

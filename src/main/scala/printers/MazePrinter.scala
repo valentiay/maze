@@ -1,4 +1,4 @@
-package game.printers
+package printers
 
 import cats.effect.Sync
 import cats.instances.list._

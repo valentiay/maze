@@ -1,4 +1,4 @@
-package game.bindings
+package config.bindings
 
 import cats.Monad
 import cats.syntax.functor._

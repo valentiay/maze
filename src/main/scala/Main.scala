@@ -1,8 +1,7 @@
 import cats.Monad
 import cats.effect.SyncIO
 import config.SettingsController
-import hero.Hero
-import game.{GameController, VictoryController}
+import game.{GameController, Hero, VictoryController}
 import game.GameController.GameControllerState
 
 object Main {

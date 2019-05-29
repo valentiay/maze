@@ -1,7 +1,7 @@
-package game.bindings
+package config.bindings
 
 import game.GameController.GameControllerState
-import hero.Hero
+import game.Hero
 import utils.MonadThrow
 
 object movement {

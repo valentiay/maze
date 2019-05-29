@@ -1,4 +1,4 @@
-package hero
+package game
 
 import monocle.macros.Lenses
 
