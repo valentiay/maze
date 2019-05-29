@@ -1,4 +1,4 @@
-package game.bindings
+package config.bindings
 
 import cats.syntax.functor._
 import cats.syntax.applicative._

@@ -11,8 +11,8 @@ import cats.syntax.functor._
 import cats.syntax.applicativeError._
 import maze.directed.{AsciiWallsFactory, UnicodeWallsFactory}
 import maze.generators.dfs
-import game.bindings.movement.{BottomBinding, FastBottomBinding, FastLeftBinding, FastRightBinding, FastTopBinding, LeftBinding, RightBinding, TopBinding}
-import game.printers.AsciiShadowGenerator
+import config.bindings.movement.{BottomBinding, FastBottomBinding, FastLeftBinding, FastRightBinding, FastTopBinding, LeftBinding, RightBinding, TopBinding}
+import printers.AsciiShadowGenerator
 import utils._
 
 object SettingsController {

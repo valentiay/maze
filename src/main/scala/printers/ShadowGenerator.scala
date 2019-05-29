@@ -1,4 +1,4 @@
-package game.printers
+package printers
 
 trait ShadowGenerator {
   def nextSymbol: String
